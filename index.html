@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <button data-animal="goldfish">goldfish</button>
+    <button data-animal="cat">cat</button>
+    <button data-animal="dog">dog</button>
+    <button data-animal="pig">pig</button>
+    <button data-animal="frog">frog</button>
+    <button data-animal="snake">snake</button>
+    <button data-animal="bird">bird</button>
+    <button data-animal="goat">goat</button>
+    <button data-animal="chicken">chicken</button>
+    <button data-animal="turtle">turtle</button>
+    <button data-animal="rabbit">rabbit</button>
+
+    <form>
+        <h1>Add an animal</h1>
+        <input id="user-text" type="text">
+        <input id="user-submit" type="button" value="submit">
+    </form>
+    <div id="gifs">
+    </div>
+
+
+
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+
+        $("button").on("click", function () {
+            var animal = $(this).attr("data-animal");
+
+            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+                animal + "&api_key=01tiRFwQLLOCasrZr3QxRnIxzG3lWBkv&limit=10";
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            })
+                .then(function (response) {
+                    var res = response.data;
+                    for (var i = 0; i < res.length; i++) {
+
+                        const still = res[i].images.fixed_height_still.url;
+                        const animate = res[i].images.fixed_height.url
+
+                        var div = $("<div>");
+                        var rate = $("<p>").text("Rating: " + res[i].rating);
+                        var image = $("<img>");
+
+
+                        image.attr('src', still);
+                        image.attr('status', "still");
+                        image.attr('data-still', still);
+                        image.attr('data-animate', animate);
+                        image.attr('data', i);
+
+
+                        div.append(rate);
+                        div.append(image);
+                        $("#gifs").prepend(div);
+                    }
+                    $(document).on('click', 'img', function () {
+                        let status = $(this).attr('status');
+                        let still = $(this).attr('data-still');
+                        let animate = $(this).attr('data-animate');
+
+                        if (status === "still") {
+                            $(this).attr('src', animate);
+                            $(this).attr('status', 'animate');
+                        } else {
+                            $(this).attr('src', still);
+                            $(this).attr('status', "still");
+                        }
+                    })
+                })
+
+        });
+
+
+    </script>
+
+
+</body>
+
+</html>
